@@ -1,0 +1,39 @@
+{
+  "name": "vue-pimcore-generator",
+  "version": "0.1.0",
+  "scripts": {},
+  "engines": {
+    "node": "^14"
+  },
+  "keywords": [
+    "vue",
+    "vuejs",
+    "valantic"
+  ],
+  "author": "valantic CEC",
+  "dependencies": {
+    "acorn": "~7.1.1",
+    "acorn-walk": "~7.1.1",
+    "command-line-args": "^5.1.1",
+    "command-line-usage": "^6.1.0",
+    "diff": "^4.0.2",
+    "eslint": "~6.8.0",
+    "eslint-config-airbnb-base": "~14.1.0",
+    "eslint-config-valantic": "~7.1.1",
+    "eslint-plugin-import": "~2.20.1",
+    "eslint-plugin-vue": "~6.2.2",
+    "fs-extra": "~9.0.0",
+    "graphql": "~15.0.0",
+    "js-beautify": "~1.11.0",
+    "lodash": "~4.17.15",
+    "md5": "~2.2.1",
+    "moment": "~2.26.0",
+    "puppeteer": "^3.3.0",
+    "signale": "~1.4.0",
+    "vue-template-compiler": "~2.6.11"
+  },
+  "devDependencies": {},
+  "bin": {
+    "generator": "main.js"
+  }
+}
