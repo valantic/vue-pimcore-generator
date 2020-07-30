@@ -12,7 +12,7 @@
   ],
   "author": "valantic CEC",
   "dependencies": {
-    "acorn": "~7.1.1",
+    "acorn": "~7.3.1",
     "acorn-walk": "~7.1.1",
     "command-line-args": "^5.1.1",
     "command-line-usage": "^6.1.0",
