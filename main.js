@@ -140,7 +140,11 @@ async function parsePageDefinition(pageDefinition) {
   await writeFile(getTwigPath(pageDefinition.template),
     `{% extends 'Default/spa.html.twig' %}
 {% block app %}
-    {% include '${getTwigPath(`${pageDefinition.template}_edit`).replace(twigBasepath, 'Default')}' %}
+    {% if editmode %}
+        {% include '${getTwigPath(`${pageDefinition.template}_edit`).replace(twigBasepath, 'Default')}' %}
+    {% else %}
+        {% include '${getTwigPath(`${pageDefinition.template}_view`).replace(twigBasepath, 'Default')}' %}
+    {% endif %}
 {% endblock %}
 `);
 
@@ -148,7 +152,7 @@ async function parsePageDefinition(pageDefinition) {
     ? document.getElementById('app').outerHTML
     : new XMLSerializer().serializeToString(document.doctype) + document.documentElement.outerHTML));
 
-  // await writeFile(getTwigPath(`${pageDefinition.template}_display`), beautify(bodyHTML));
+  await writeFile(getTwigPath(`${pageDefinition.template}_view`), beautify(bodyHTML));
 
   bodyHTML = await page.evaluate(() => (document.getElementById('not-app-anymore')
     ? document.getElementById('not-app-anymore').outerHTML
