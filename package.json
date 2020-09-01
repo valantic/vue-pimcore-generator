@@ -34,6 +34,6 @@
   },
   "devDependencies": {},
   "bin": {
-    "generator": "main.js"
+    "vue-pimcore-generator": "main.js"
   }
 }
