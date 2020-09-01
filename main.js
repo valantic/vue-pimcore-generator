@@ -137,9 +137,12 @@ async function parsePageDefinition(pageDefinition) {
 
   logVerbose('note', `Writing Twig template as ${pageDefinition.template}`);
 
+  const extendsTemplate = _.defaultTo(definitions.twig.baseTemplate, '').length > 0
+    ? `{% extends '${definitions.twig.baseTemplate}' %}\n`
+    : '';
+
   await writeFile(getTwigPath(pageDefinition.template),
-    `{% extends 'Default/spa.html.twig' %}
-{% block app %}
+    `${extendsTemplate}{% block app %}
     {% if editmode %}
         {% include '${getTwigPath(`${pageDefinition.template}_edit`).replace(twigBasepath, 'Default')}' %}
     {% else %}

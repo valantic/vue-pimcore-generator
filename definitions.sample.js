@@ -26,6 +26,9 @@ module.exports = {
   browser: {
     // see https://pptr.dev/#?product=Puppeteer&version=v3.3.0&show=api-puppeteerlaunchoptions
   },
+  twig: {
+    baseTemplate: 'layouts/base.html.twig', // the twig template other pages inherit from
+  },
   // global start hook
   async start({
     log, browser, page, pageDefinition
@@ -82,7 +85,7 @@ module.exports = {
         }
       ],
       // Page-specific hook overrides global hook.
-      preParse: async({
+      preParse: async ({
         log, browser, page, pageDefinition
       }) => {
         //
