@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "scripts": {},
   "engines": {
-    "node": "^14"
+    "node": ">=12 || <= 14"
   },
   "keywords": [
     "vue",
