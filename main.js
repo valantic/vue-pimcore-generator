@@ -144,9 +144,9 @@ async function parsePageDefinition(pageDefinition) {
   await writeFile(getTwigPath(pageDefinition.template),
     `${extendsTemplate}{% block app %}
     {% if editmode %}
-        {% include '${getTwigPath(`${pageDefinition.template}_edit`).replace(twigBasepath, 'Default')}' %}
+        {% include '${getTwigPath(`${pageDefinition.template}_edit`).replace(twigBasepath, '').substr(1)}' %}
     {% else %}
-        {% include '${getTwigPath(`${pageDefinition.template}_view`).replace(twigBasepath, 'Default')}' %}
+        {% include '${getTwigPath(`${pageDefinition.template}_view`).replace(twigBasepath, '').substr(1)}' %}
     {% endif %}
 {% endblock %}
 `);
