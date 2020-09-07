@@ -1,6 +1,6 @@
 # Vue-Pimcore Generator
 
-`$ node prerender.js --help`
+`node node_modules/.bin/vue-pimcore-generator --help`
 
 ## Elevator Pitch
 
