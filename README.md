@@ -6,6 +6,10 @@
 
 Pimcore uses a WYSIWYG editor to edit documents which is incompatible with Vue components. To alleviate that, this generator opens a web page in the frontend, parses its contents, and creates Pimcore Areabricks. This is done using data attributes in Vue. Creating these Areabricks allows an editor to drag&drop components on a page and being able to see a preview within Pimcore which closely resembles the Vue frontend.
 
+## generator-definitions
+
+This file defines which pages should be parsed by the Pimcore generator. To see the available options and their use, please see the `generator-definitions.sample.js` file.
+
 ## Supported `data-pimcore-*` attributes
 
 - `data-pimcore-areabrick` The name that should be used for the area brick in Pimcore. Only [a-z] are allowed.
