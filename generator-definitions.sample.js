@@ -59,7 +59,9 @@ module.exports = {
   pages: [
     // Minimal example
     {
+      // The path, that should be called by the inspector
       path: 'de/news',
+      // The name of the page template, that should be generated for the inspected path (optional)
       template: 'news',
     },
     // Kitchen sink

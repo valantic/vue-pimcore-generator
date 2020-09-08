@@ -95,15 +95,19 @@ async function parsePageDefinition(pageDefinition) {
   logVerbose('await', `Loading page ${pageDefinition.path}`);
   await page.goto(`${baseUrl}${pageDefinition.path}`, { waitUntil: 'networkidle0' });
 
-  await _.defaultTo(pageDefinition.preParse, _.defaultTo(definitions.preParse, () => {
-  }))({
+  await (pageDefinition.preParse || definitions.preParse || function() {})({
     pageDefinition, browser, page, log
   });
+
+  // Replace #app id to prevent Vue initialization in Pimcore live edit
   await page.evaluate(() => {
-    if (!document.getElementById('app')) {
+    const app = document.getElementById('app')
+
+    if (!app) {
       return;
     }
-    document.getElementById('app').id = 'not-app-anymore';
+
+    app.id = 'not-app-anymore';
   });
 
   logVerbose('note', 'Disabling navigation for admin mode');
@@ -141,8 +145,10 @@ async function parsePageDefinition(pageDefinition) {
     ? `{% extends '${definitions.twig.baseTemplate}' %}\n`
     : '';
 
-  await writeFile(getTwigPath(pageDefinition.template),
-    `${extendsTemplate}{% block app %}
+  // Create page template, if defined in generator-definitions
+  if (pageDefinition.template) {
+    await writeFile(getTwigPath(pageDefinition.template),
+      `${extendsTemplate}{% block app %}
     {% if editmode %}
         {% include '${getTwigPath(`${pageDefinition.template}_edit`).replace(twigBasepath, '').substr(1)}' %}
     {% else %}
@@ -151,21 +157,20 @@ async function parsePageDefinition(pageDefinition) {
 {% endblock %}
 `);
 
-  let bodyHTML = await page.evaluate(() => (document.getElementById('app')
-    ? document.getElementById('app').outerHTML
-    : new XMLSerializer().serializeToString(document.doctype) + document.documentElement.outerHTML));
+    // Extract body from puppeteer
+    let bodyHTML = await page.evaluate(() => (new XMLSerializer().serializeToString(document.doctype) + document.documentElement.outerHTML));
 
-  await writeFile(getTwigPath(`${pageDefinition.template}_view`), beautify(bodyHTML));
+    await writeFile(getTwigPath(`${pageDefinition.template}_view`), beautify(bodyHTML));
 
-  bodyHTML = await page.evaluate(() => (document.getElementById('not-app-anymore')
-    ? document.getElementById('not-app-anymore').outerHTML
-    : new XMLSerializer().serializeToString(document.doctype) + document.documentElement.outerHTML));
+    bodyHTML = await page.evaluate(() => (document.getElementById('not-app-anymore')
+      ? document.getElementById('not-app-anymore').outerHTML
+      : new XMLSerializer().serializeToString(document.doctype) + document.documentElement.outerHTML));
 
-  bodyHTML = bodyHTML.replace(/disabled-in-editmode/g, "{{ editmode ? 'disabled' : '' }}");
-  await writeFile(getTwigPath(`${pageDefinition.template}_edit`), beautify(bodyHTML));
+    bodyHTML = bodyHTML.replace(/disabled-in-editmode/g, "{{ editmode ? 'disabled' : '' }}");
+    await writeFile(getTwigPath(`${pageDefinition.template}_edit`), beautify(bodyHTML));
+  }
 
-  await _.defaultTo(pageDefinition.done, _.defaultTo(definitions.done, () => {
-  }))({
+  await (pageDefinition.done || definitions.done || function() {})({
     pageDefinition, browser, page, log
   });
   log('complete', `Done with page ${pageDefinition.path}`);
