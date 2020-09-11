@@ -156,7 +156,7 @@ async function parsePageDefinition(pageDefinition) {
       ? `{% extends '${definitions.twig.baseTemplate}' %}\n`
       : '';
 
-    await writeFile(getTwigPath(pageDefinition.template),
+    await writeFile(getTwigPath(templateStump),
       `${extendsTemplate}{% block app %}
     {% if editmode %}
         {% include '${getTwigPath(`${templateStump}_edit`).replace(twigBasepath, '').substr(1)}' %}
