@@ -151,9 +151,10 @@ async function parsePageDefinition(pageDefinition) {
       throw new Error(`No template name was defined for the template in '${pageDefinition.path}'.`)
     }
 
-    const templateStump = `${pageDefinition.templatePath}/${templateName}`
-    const extendsTemplate = pageDefinition.baseTemplate || definitions.twig.baseTemplate
-      ? `{% extends '${definitions.twig.baseTemplate}' %}\n`
+    const templateStump = `${pageDefinition.templatePath}/${templateName}`;
+    const baseTemplate = pageDefinition.baseTemplate || definitions.twig.baseTemplate;
+    const extendsTemplate = baseTemplate
+      ? `{% extends '${baseTemplate}' %}\n`
       : '';
 
     await writeFile(getTwigPath(templateStump),
