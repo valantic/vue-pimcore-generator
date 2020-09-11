@@ -152,7 +152,7 @@ async function parsePageDefinition(pageDefinition) {
     }
 
     const templateStump = `${pageDefinition.templatePath}/${templateName}`
-    const extendsTemplate = (definitions.twig.baseTemplate || '').length
+    const extendsTemplate = pageDefinition.baseTemplate || definitions.twig.baseTemplate
       ? `{% extends '${definitions.twig.baseTemplate}' %}\n`
       : '';
 
