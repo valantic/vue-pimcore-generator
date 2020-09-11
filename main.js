@@ -134,40 +134,52 @@ async function parsePageDefinition(pageDefinition) {
   logVerbose('note', 'Fixing CSS paths');
   await fixCssPaths(page);
 
-  await _.defaultTo(pageDefinition.postParse, _.defaultTo(definitions.postParse, () => {
-  }))({
+  await (pageDefinition.postParse || definitions.postParse || function() {})({
     pageDefinition, browser, page, log
   });
 
-  logVerbose('note', `Writing Twig template as ${pageDefinition.template}`);
-
-  const extendsTemplate = _.defaultTo(definitions.twig.baseTemplate, '').length > 0
-    ? `{% extends '${definitions.twig.baseTemplate}' %}\n`
-    : '';
-
   // Create page template, if defined in generator-definitions
-  if (pageDefinition.template) {
+  if (pageDefinition.templatePath) {
+    logVerbose('note', `Writing Twig template as ${pageDefinition.template}`);
+    const templateName = await page.evaluate(() => {
+      const template = document.querySelector('[data-pimcore-template]');
+
+      return (template && template.dataset.pimcoreTemplate) || null;
+    });
+
+    if (!templateName) {
+      throw new Error(`No template name was defined for the template in '${pageDefinition.path}'.`)
+    }
+
+    const templateStump = `${pageDefinition.templatePath}/${templateName}`
+    const extendsTemplate = (definitions.twig.baseTemplate || '').length
+      ? `{% extends '${definitions.twig.baseTemplate}' %}\n`
+      : '';
+
     await writeFile(getTwigPath(pageDefinition.template),
       `${extendsTemplate}{% block app %}
     {% if editmode %}
-        {% include '${getTwigPath(`${pageDefinition.template}_edit`).replace(twigBasepath, '').substr(1)}' %}
+        {% include '${getTwigPath(`${templateStump}_edit`).replace(twigBasepath, '').substr(1)}' %}
     {% else %}
-        {% include '${getTwigPath(`${pageDefinition.template}_view`).replace(twigBasepath, '').substr(1)}' %}
+        {% include '${getTwigPath(`${templateStump}_view`).replace(twigBasepath, '').substr(1)}' %}
     {% endif %}
 {% endblock %}
 `);
 
     // Extract body from puppeteer
-    let bodyHTML = await page.evaluate(() => (new XMLSerializer().serializeToString(document.doctype) + document.documentElement.outerHTML));
+    let bodyHTML = await page.evaluate(() => {
+      const template = document.querySelector('[data-pimcore-template]') || document.documentElement;
 
-    await writeFile(getTwigPath(`${pageDefinition.template}_view`), beautify(bodyHTML));
+      delete template.dataset.pimcoreTemplate;
 
-    bodyHTML = await page.evaluate(() => (document.getElementById('not-app-anymore')
-      ? document.getElementById('not-app-anymore').outerHTML
-      : new XMLSerializer().serializeToString(document.doctype) + document.documentElement.outerHTML));
+      return template.outerHTML; // TODO: remove any other extractions (e.g. data-pimcore-areabrick elements)
+    });
+
+    await writeFile(getTwigPath(`${templateStump}_view`), beautify(bodyHTML));
 
     bodyHTML = bodyHTML.replace(/disabled-in-editmode/g, "{{ editmode ? 'disabled' : '' }}");
-    await writeFile(getTwigPath(`${pageDefinition.template}_edit`), beautify(bodyHTML));
+
+    await writeFile(getTwigPath(`${templateStump}_edit`), beautify(bodyHTML));
   }
 
   await (pageDefinition.done || definitions.done || function() {})({

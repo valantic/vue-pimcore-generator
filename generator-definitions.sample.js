@@ -67,7 +67,8 @@ module.exports = {
     // Kitchen sink
     {
       path: 'de/index',
-      template: 'default',
+      // If a template should be generated for the current page, this is the path to where it is exported.
+      templatePath: 'default',
       browser: {
         // Define page-specific browser options.
         // Will be merged with global browser options.
