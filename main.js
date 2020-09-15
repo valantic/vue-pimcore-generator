@@ -32,7 +32,7 @@ process.on('unhandledRejection', (error) => {
   process.exit(1);
 });
 
-const globalCookies = _.defaultTo(definitions.cookies, []);
+const globalCookies = definitions.cookies || [];
 
 /**
  * Defines which URLs (`path`) should be parsed and which Twig template
@@ -57,13 +57,13 @@ async function parsePageDefinition(pageDefinition) {
   logVerbose('await', 'Starting browser');
   const browserOptions = _.defaultsDeep(
     {},
-    _.defaultTo(pageDefinition.browser, {}),
+    pageDefinition.browser || {},
     {
       defaultViewport: {
         width: 1920, height: 1080, deviceScaleFactor: 1, isMobile: false, hasTouch: false
       }
     },
-    _.defaultTo(definitions.browser, {}),
+    definitions.browser || {},
     options.debug ? {
       headless: false,
       devtools: true,
@@ -79,14 +79,13 @@ async function parsePageDefinition(pageDefinition) {
   const browser = await puppeteer.launch(browserOptions);
   const page = await browser.newPage();
 
-  await page.setCookie(...prepareCookies(...globalCookies, ..._.defaultTo(pageDefinition.cookies, [])));
+  await page.setCookie(...prepareCookies(...globalCookies, ...(pageDefinition.cookies || []));
 
   if (options.debug) {
     page.on('console', msg => log('debug', '%s: console.%s(): %s', pageDefinition.path, msg.type(), msg.text()));
   }
 
-  await _.defaultTo(pageDefinition.start, _.defaultTo(definitions.start, () => {
-  }))({
+  await (pageDefinition.start || definitions.start || function() {})({
     pageDefinition, browser, page, log
   });
 
