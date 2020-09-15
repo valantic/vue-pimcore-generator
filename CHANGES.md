@@ -1,6 +1,8 @@
 # Changelog
 
 ### Next
+
+### 0.3.1 (2020-09-15)
 * (Feature) Adds query parameter to called urls, so that Vue can react to the 'generator mode'.
 
 ### 0.3.0 (2020-09-15)
