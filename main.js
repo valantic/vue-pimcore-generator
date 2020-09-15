@@ -94,7 +94,7 @@ async function parsePageDefinition(pageDefinition) {
 
   logVerbose('await', `Loading page ${pageDefinition.path}`);
   // attempt to append query string to the URL, handles the case with an existing query string and no query string
-  const pageUrl = `${baseUrl}${pageDefinition.path}${pageDefinition.path.contains('?') ? '&' : '?'}is_generator=1`;
+  const pageUrl = `${baseUrl}${pageDefinition.path}${pageDefinition.path.includes('?') ? '&' : '?'}is_generator=1`;
 
   await page.goto(pageUrl, { waitUntil: 'networkidle0' });
 
