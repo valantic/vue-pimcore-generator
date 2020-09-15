@@ -78,23 +78,26 @@ async function parsePageDefinition(pageDefinition) {
 
   const browser = await puppeteer.launch(browserOptions);
   const page = await browser.newPage();
-  const cookies = pageDefinition.cookies || [];
+  const {
+    cookies = [],
+    path,
+  } = pageDefinition;
 
   await page.setCookie(...prepareCookies(...globalCookies, ...cookies));
 
   if (options.debug) {
-    page.on('console', msg => log('debug', '%s: console.%s(): %s', pageDefinition.path, msg.type(), msg.text()));
+    page.on('console', msg => log('debug', '%s: console.%s(): %s', path, msg.type(), msg.text()));
   }
 
   await (pageDefinition.start || definitions.start || function() {})({
     pageDefinition, browser, page, log
   });
 
-  log('start', pageDefinition.path);
+  log('start', path);
 
-  logVerbose('await', `Loading page ${pageDefinition.path}`);
+  logVerbose('await', `Loading page ${path}`);
   // attempt to append query string to the URL, handles the case with an existing query string and no query string
-  const pageUrl = `${baseUrl}${pageDefinition.path}${pageDefinition.path.contains('?') ? '&' : '?'}is_generator=1`;
+  const pageUrl = `${baseUrl}${path}${path.contains('?') ? '&' : '?'}is_generator=1`;
 
   await page.goto(pageUrl, { waitUntil: 'networkidle0' });
 
@@ -151,8 +154,8 @@ async function parsePageDefinition(pageDefinition) {
     });
 
     if (!templateName) {
-      log('error', `No template name was defined for the template in '${pageDefinition.path}'`);
-      throw new Error(`No template name was defined for the template in '${pageDefinition.path}'.`);
+      log('error', `No template name was defined for the template in '${path}'`);
+      throw new Error(`No template name was defined for the template in '${path}'.`);
     }
 
     const templateStump = `${pageDefinition.templatePath}/${templateName}`;
@@ -190,7 +193,7 @@ async function parsePageDefinition(pageDefinition) {
   await (pageDefinition.done || definitions.done || function() {})({
     pageDefinition, browser, page, log
   });
-  log('complete', `Done with page ${pageDefinition.path}`);
+  log('complete', `Done with page ${path}`);
 
   if (!options.debug) {
     await browser.close();
