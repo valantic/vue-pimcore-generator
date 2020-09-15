@@ -78,8 +78,9 @@ async function parsePageDefinition(pageDefinition) {
 
   const browser = await puppeteer.launch(browserOptions);
   const page = await browser.newPage();
+  const cookies = pageDefinition.cookies || [];
 
-  await page.setCookie(...prepareCookies(...globalCookies, ...(pageDefinition.cookies || []));
+  await page.setCookie(...prepareCookies(...globalCookies, ...cookies));
 
   if (options.debug) {
     page.on('console', msg => log('debug', '%s: console.%s(): %s', pageDefinition.path, msg.type(), msg.text()));
@@ -100,7 +101,7 @@ async function parsePageDefinition(pageDefinition) {
 
   // Replace #app id to prevent Vue initialization in Pimcore live edit
   await page.evaluate(() => {
-    const app = document.getElementById('app')
+    const app = document.getElementById('app');
 
     if (!app) {
       return;
@@ -147,8 +148,8 @@ async function parsePageDefinition(pageDefinition) {
     });
 
     if (!templateName) {
-      log('error', `No template name was defined for the template in \'${pageDefinition.path}\'`);
-      throw new Error(`No template name was defined for the template in '${pageDefinition.path}'.`)
+      log('error', `No template name was defined for the template in '${pageDefinition.path}'`);
+      throw new Error(`No template name was defined for the template in '${pageDefinition.path}'.`);
     }
 
     const templateStump = `${pageDefinition.templatePath}/${templateName}`;
