@@ -148,6 +148,7 @@ async function parsePageDefinition(pageDefinition) {
     });
 
     if (!templateName) {
+      log('error', `No template name was defined for the template in \'${pageDefinition.path}\'`);
       throw new Error(`No template name was defined for the template in '${pageDefinition.path}'.`)
     }
 
