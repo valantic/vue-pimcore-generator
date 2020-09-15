@@ -32,7 +32,7 @@ process.on('unhandledRejection', (error) => {
   process.exit(1);
 });
 
-const globalCookies = _.defaultTo(definitions.cookies, []);
+const globalCookies = definitions.cookies || [];
 
 /**
  * Defines which URLs (`path`) should be parsed and which Twig template
@@ -57,13 +57,13 @@ async function parsePageDefinition(pageDefinition) {
   logVerbose('await', 'Starting browser');
   const browserOptions = _.defaultsDeep(
     {},
-    _.defaultTo(pageDefinition.browser, {}),
+    pageDefinition.browser || {},
     {
       defaultViewport: {
         width: 1920, height: 1080, deviceScaleFactor: 1, isMobile: false, hasTouch: false
       }
     },
-    _.defaultTo(definitions.browser, {}),
+    definitions.browser || {},
     options.debug ? {
       headless: false,
       devtools: true,
@@ -78,8 +78,9 @@ async function parsePageDefinition(pageDefinition) {
 
   const browser = await puppeteer.launch(browserOptions);
   const page = await browser.newPage();
+  const cookies = pageDefinition.cookies || [];
 
-  await page.setCookie(...prepareCookies(...globalCookies, ..._.defaultTo(pageDefinition.cookies, [])));
+  await page.setCookie(...prepareCookies(...globalCookies, ...cookies));
 
   if (options.debug) {
     page.on('console', msg => log('debug', '%s: console.%s(): %s', pageDefinition.path, msg.type(), msg.text()));
@@ -100,7 +101,7 @@ async function parsePageDefinition(pageDefinition) {
 
   // Replace #app id to prevent Vue initialization in Pimcore live edit
   await page.evaluate(() => {
-    const app = document.getElementById('app')
+    const app = document.getElementById('app');
 
     if (!app) {
       return;
@@ -133,40 +134,54 @@ async function parsePageDefinition(pageDefinition) {
   logVerbose('note', 'Fixing CSS paths');
   await fixCssPaths(page);
 
-  await _.defaultTo(pageDefinition.postParse, _.defaultTo(definitions.postParse, () => {
-  }))({
+  await (pageDefinition.postParse || definitions.postParse || function() {})({
     pageDefinition, browser, page, log
   });
 
-  logVerbose('note', `Writing Twig template as ${pageDefinition.template}`);
-
-  const extendsTemplate = _.defaultTo(definitions.twig.baseTemplate, '').length > 0
-    ? `{% extends '${definitions.twig.baseTemplate}' %}\n`
-    : '';
-
   // Create page template, if defined in generator-definitions
-  if (pageDefinition.template) {
-    await writeFile(getTwigPath(pageDefinition.template),
+  if (pageDefinition.templatePath) {
+    logVerbose('note', `Writing Twig template as ${pageDefinition.template}`);
+    const templateName = await page.evaluate(() => {
+      const template = document.querySelector('[data-pimcore-template]');
+
+      return (template && template.dataset.pimcoreTemplate) || null;
+    });
+
+    if (!templateName) {
+      log('error', `No template name was defined for the template in '${pageDefinition.path}'`);
+      throw new Error(`No template name was defined for the template in '${pageDefinition.path}'.`);
+    }
+
+    const templateStump = `${pageDefinition.templatePath}/${templateName}`;
+    const baseTemplate = pageDefinition.baseTemplate || definitions.twig.baseTemplate;
+    const extendsTemplate = baseTemplate
+      ? `{% extends '${baseTemplate}' %}\n`
+      : '';
+
+    await writeFile(getTwigPath(templateStump),
       `${extendsTemplate}{% block app %}
     {% if editmode %}
-        {% include '${getTwigPath(`${pageDefinition.template}_edit`).replace(twigBasepath, '').substr(1)}' %}
+        {% include '${getTwigPath(`${templateStump}_edit`).replace(twigBasepath, '').substr(1)}' %}
     {% else %}
-        {% include '${getTwigPath(`${pageDefinition.template}_view`).replace(twigBasepath, '').substr(1)}' %}
+        {% include '${getTwigPath(`${templateStump}_view`).replace(twigBasepath, '').substr(1)}' %}
     {% endif %}
 {% endblock %}
 `);
 
     // Extract body from puppeteer
-    let bodyHTML = await page.evaluate(() => (new XMLSerializer().serializeToString(document.doctype) + document.documentElement.outerHTML));
+    let bodyHTML = await page.evaluate(() => {
+      const template = document.querySelector('[data-pimcore-template]') || document.documentElement;
 
-    await writeFile(getTwigPath(`${pageDefinition.template}_view`), beautify(bodyHTML));
+      delete template.dataset.pimcoreTemplate;
 
-    bodyHTML = await page.evaluate(() => (document.getElementById('not-app-anymore')
-      ? document.getElementById('not-app-anymore').outerHTML
-      : new XMLSerializer().serializeToString(document.doctype) + document.documentElement.outerHTML));
+      return template.outerHTML; // TODO: remove any other extractions (e.g. data-pimcore-areabrick elements)
+    });
+
+    await writeFile(getTwigPath(`${templateStump}_view`), beautify(bodyHTML));
 
     bodyHTML = bodyHTML.replace(/disabled-in-editmode/g, "{{ editmode ? 'disabled' : '' }}");
-    await writeFile(getTwigPath(`${pageDefinition.template}_edit`), beautify(bodyHTML));
+
+    await writeFile(getTwigPath(`${templateStump}_edit`), beautify(bodyHTML));
   }
 
   await (pageDefinition.done || definitions.done || function() {})({
