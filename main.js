@@ -93,7 +93,10 @@ async function parsePageDefinition(pageDefinition) {
   log('start', pageDefinition.path);
 
   logVerbose('await', `Loading page ${pageDefinition.path}`);
-  await page.goto(`${baseUrl}${pageDefinition.path}`, { waitUntil: 'networkidle0' });
+  // attempt to append query string to the URL, handles the case with an existing query string and no query string
+  const pageUrl = `${baseUrl}${pageDefinition.path}${pageDefinition.path.contains('?') ? '&' : '?'}is_generator=1`;
+
+  await page.goto(pageUrl, { waitUntil: 'networkidle0' });
 
   await (pageDefinition.preParse || definitions.preParse || function() {})({
     pageDefinition, browser, page, log
