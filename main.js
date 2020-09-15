@@ -85,8 +85,7 @@ async function parsePageDefinition(pageDefinition) {
     page.on('console', msg => log('debug', '%s: console.%s(): %s', pageDefinition.path, msg.type(), msg.text()));
   }
 
-  await _.defaultTo(pageDefinition.start, _.defaultTo(definitions.start, () => {
-  }))({
+  await (pageDefinition.start || definitions.start || function() {})({
     pageDefinition, browser, page, log
   });
 
