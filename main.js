@@ -5,7 +5,12 @@ const _ = require('lodash');
 const { writeFile, updateManifest } = require('./lib/output');
 
 const {
-  options, definitions, baseUrl, manifest, log, logVerbose
+  options,
+  definitions,
+  baseUrl,
+  manifest,
+  log,
+  logVerbose,
 } = require('./lib/cli-options');
 const { beautify } = require('./lib/beautify');
 const {
@@ -143,7 +148,7 @@ async function parsePageDefinition(pageDefinition) {
     });
 
     if (!templateName) {
-      log('error', `No template name was defined for the template in '${path}'`);
+      log('error', `No template name was defined for the template in '${path}'.`);
       throw new Error(`No template name was defined for the template in '${path}'.`);
     }
 

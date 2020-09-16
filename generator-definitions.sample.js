@@ -12,6 +12,8 @@ module.exports = {
   pimcoreBasepath: root => path.join(root, '..', 'pimcore'),
   // optional, default is ../pimcore/app/Resources/views/Default
   twigBasepath: pimcoreRoot => path.join(pimcoreRoot, 'app', 'Resources', 'views', 'Default'),
+  // optional, default is ../pimcore/app/Resources/views/snippets
+  snippetTwigBasepath: pimcoreRoot => path.join(pimcoreRoot, 'app', 'Resources', 'views', 'snippets'),
   // optional, default is ../pimcore/app/Resources/views/Areas
   areabrickTwigBasepath: pimcoreRoot => path.join(pimcoreRoot, 'app', 'Resources', 'views', 'Areas'),
   // optional, default is ../pimcore/src/AppBundle/Document/Areabrick
@@ -88,7 +90,7 @@ module.exports = {
         }
       ],
       // Page-specific hook overrides global hook.
-      preParse: async ({
+      preParse: async({
         log, browser, page, pageDefinition
       }) => {
         //
