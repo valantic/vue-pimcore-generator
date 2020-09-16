@@ -2,6 +2,9 @@
 
 ### Next
 
+### 0.4.1 (2020-09-16)
+* (Bugfix) Fixes invalid docuemnt-types definition for snippets.
+
 ### 0.4.0 (2020-09-16)
 * (Breaking) Changes Pimcore template structure (3 files to 2 files).
 * (Feature) Adds support for `data-pimcore-snippet="<name>"` attribute
