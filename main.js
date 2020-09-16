@@ -148,7 +148,7 @@ async function parsePageDefinition(pageDefinition) {
     });
 
     if (!templateName) {
-      log('error', `No template name was defined for the template in '${path}'.`);
+      log('error', 'No template name was defined for the template in "%s".', path);
       throw new Error(`No template name was defined for the template in '${path}'.`);
     }
 
@@ -187,7 +187,7 @@ async function parsePageDefinition(pageDefinition) {
   await (pageDefinition.done || definitions.done || function() {})({
     pageDefinition, browser, page, log
   });
-  log('complete', `Done with page ${path}`);
+  log('complete', 'Done with page %s.', path);
 
   if (!options.debug) {
     await browser.close();
