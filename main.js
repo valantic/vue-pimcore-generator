@@ -5,7 +5,12 @@ const _ = require('lodash');
 const { writeFile, updateManifest } = require('./lib/output');
 
 const {
-  options, definitions, baseUrl, manifest, log, logVerbose
+  options,
+  definitions,
+  baseUrl,
+  manifest,
+  log,
+  logVerbose,
 } = require('./lib/cli-options');
 const { beautify } = require('./lib/beautify');
 const {
@@ -106,6 +111,15 @@ async function parsePageDefinition(pageDefinition) {
   });
 
   // Replace #app id to prevent Vue initialization in Pimcore live edit
+  /**
+   * TODO: this seems to cause a timeout and a Vue exception.
+   *   Still, it seems to be required, if removed, invalid templates are generated (content is not reduced).
+   *   Best would be to create a clone of the DOM and work with the clone instead of manipulating the DOM.
+   *   @see https://pptr.dev/#?product=Puppeteer&version=v2.1.1&show=api-pageevaluatepagefunction-args
+   *   const bodyHandle = await page.$('body');
+   *   const html = await page.evaluate(body => body.innerHTML, bodyHandle);
+   *   await bodyHandle.dispose();
+   */
   await page.evaluate(() => {
     const app = document.getElementById('app');
 
@@ -154,7 +168,7 @@ async function parsePageDefinition(pageDefinition) {
     });
 
     if (!templateName) {
-      log('error', `No template name was defined for the template in '${path}'`);
+      log('error', 'No template name was defined for the template in "%s".', path);
       throw new Error(`No template name was defined for the template in '${path}'.`);
     }
 
@@ -193,7 +207,7 @@ async function parsePageDefinition(pageDefinition) {
   await (pageDefinition.done || definitions.done || function() {})({
     pageDefinition, browser, page, log
   });
-  log('complete', `Done with page ${path}`);
+  log('complete', 'Done with page %s.', path);
 
   if (!options.debug) {
     await browser.close();
