@@ -110,6 +110,17 @@ async function parsePageDefinition(pageDefinition) {
     pageDefinition, browser, page, log
   });
 
+  // Replace #app id to prevent Vue initialization in Pimcore live edit
+  await page.evaluate(() => {
+    const app = document.getElementById('app');
+
+    if (!app) {
+      return;
+    }
+
+    app.id = 'not-app-anymore';
+  });
+
   logVerbose('note', 'Disabling navigation for admin mode');
   await disableNavigation(page);
 
