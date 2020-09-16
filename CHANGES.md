@@ -2,6 +2,10 @@
 
 ### Next
 
+### 0.4.0 (2020-09-16)
+* (Breaking) Changes Pimcore template structure (3 files to 2 files).
+* (Feature) Adds support for `data-pimcore-snippet="<name>"` attribute
+
 ### 0.3.1 (2020-09-15)
 * (Feature) Adds query parameter to called urls, so that Vue can react to the 'generator mode'.
 
