@@ -111,6 +111,15 @@ async function parsePageDefinition(pageDefinition) {
   });
 
   // Replace #app id to prevent Vue initialization in Pimcore live edit
+  /**
+   * TODO: this seems to cause a timeout and a Vue exception.
+   *   Still, it seems to be required, if removed, invalid templates are generated (content is not reduced).
+   *   Best would be to create a clone of the DOM and work with the clone instead of manipulating the DOM.
+   *   @see https://pptr.dev/#?product=Puppeteer&version=v2.1.1&show=api-pageevaluatepagefunction-args
+   *   const bodyHandle = await page.$('body');
+   *   const html = await page.evaluate(body => body.innerHTML, bodyHandle);
+   *   await bodyHandle.dispose();
+   */
   await page.evaluate(() => {
     const app = document.getElementById('app');
 
