@@ -1,6 +1,7 @@
 # Changelog
 
 ### Next
+* (Breaking) Changes root element of snippet HTML to outerHTML.
 
 ### 0.4.1 (2020-09-16)
 * (Bugfix) Fixes invalid docuemnt-types definition for snippets.
