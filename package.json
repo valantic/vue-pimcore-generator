@@ -1,5 +1,7 @@
 {
   "name": "@valantic/vue-pimcore-generator",
+  "description": "Generate Pimcore Twig templates based on your Vue components.",
+  "homepage": "https://github.com/valantic/vue-pimcore-generator",
   "version": "0.5.0",
   "scripts": {},
   "engines": {
@@ -8,9 +10,12 @@
   "keywords": [
     "vue",
     "vuejs",
+    "pimcore",
+    "twig",
     "valantic"
   ],
-  "author": "valantic CEC",
+  "license": "MIT",
+  "author": "valantic CEC Schweiz AG",
   "dependencies": {
     "acorn": "~7.3.1",
     "acorn-walk": "~7.2.0",
@@ -35,5 +40,12 @@
   "devDependencies": {},
   "bin": {
     "vue-pimcore-generator": "main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/valantic/vue-pimcore-generator.git"
+  },
+  "bugs": {
+    "url": "https://github.com/valantic/vue-pimcore-generator/issues"
   }
 }
