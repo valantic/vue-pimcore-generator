@@ -1,5 +1,5 @@
 {
-  "name": "vue-pimcore-generator",
+  "name": "@valantic/vue-pimcore-generator",
   "version": "0.5.0",
   "scripts": {},
   "engines": {
