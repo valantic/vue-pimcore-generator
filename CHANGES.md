@@ -1,6 +1,8 @@
 # Changelog
 
 ### Next
+
+### 0.5.0 (2020-10-19)
 * (Breaking) Changes root element of snippet HTML to outerHTML.
 * (Bugfix) Use correct path to snippet in `document-types.php`
 
