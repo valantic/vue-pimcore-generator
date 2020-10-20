@@ -1,5 +1,7 @@
 # Vue-Pimcore Generator
 
+[![npm version](https://badge.fury.io/js/%40valantic%2Fvue-pimcore-generator.svg)](https://badge.fury.io/js/%40valantic%2Fvue-pimcore-generator)
+
 `node node_modules/.bin/vue-pimcore-generator --help`
 
 ## Elevator Pitch
