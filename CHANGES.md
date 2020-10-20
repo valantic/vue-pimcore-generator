@@ -2,6 +2,12 @@
 
 ### Next
 
+### 0.5.2 (2020-10-20)
+* (Bugfix) Correct HTML for snippets (bug introduced in `0.5.0`)
+
+### 0.5.1 (2020-10-19)
+* added NPM-related fields to `package.json`
+
 ### 0.5.0 (2020-10-19)
 * (Breaking) Changes root element of snippet HTML to outerHTML.
 * (Bugfix) Use correct path to snippet in `document-types.php`
