@@ -19,4 +19,4 @@ $newId = max(array_keys($definitions)) + 1;
 $definition['id'] = $newId;
 $definitions[$newId] = $definition;
 
-file_put_contents($path, "<?php \n\nreturn " . var_export54($definitions) . ";\n");
+file_put_contents($path, "<?php\n\nreturn " . var_export54($definitions) . ";\n");
