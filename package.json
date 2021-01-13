@@ -2,7 +2,7 @@
   "name": "@valantic/vue-pimcore-generator",
   "description": "Generate Pimcore Twig templates based on your Vue components.",
   "homepage": "https://github.com/valantic/vue-pimcore-generator",
-  "version": "0.5.2",
+  "version": "0.5.3",
   "scripts": {},
   "engines": {
     "node": ">=12 || <= 14"

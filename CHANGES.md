@@ -1,6 +1,8 @@
 # Changelog
 
 ### Next
+
+### 0.5.3 (2021-01-13)
 * (Change) Replaces moment.js with native date handling.
 
 ### 0.5.2 (2020-10-20)
