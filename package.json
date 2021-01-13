@@ -32,7 +32,6 @@
     "js-beautify": "~1.11.0",
     "lodash": "~4.17.15",
     "md5": "~2.2.1",
-    "moment": "~2.26.0",
     "puppeteer": "^3.3.0",
     "signale": "~1.4.0",
     "vue-template-compiler": "~2.6.11"
