@@ -1,6 +1,7 @@
 # Changelog
 
 ### Next
+* (Change) Replaces moment.js with native date handling.
 
 ### 0.5.2 (2020-10-20)
 * (Bugfix) Correct HTML for snippets (bug introduced in `0.5.0`)
